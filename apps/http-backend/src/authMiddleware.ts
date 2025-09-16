@@ -1,7 +1,7 @@
+import { JWT_SECRET } from "@repo/backend-common/config";
 import { Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 
-const JWT_SECRET = "supersecretkey"; // In production, keep in .env file
 
 // ================= Middleware =================
 interface AuthRequest extends Request {

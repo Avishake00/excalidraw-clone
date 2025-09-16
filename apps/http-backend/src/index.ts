@@ -2,12 +2,13 @@ import express, { Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { authMiddleware } from "./authMiddleware";
+import { JWT_SECRET } from "@repo/backend-common/config";
+import {CreateUserSchema} from '@repo/common/types';
+import prismaClient from '@repo/db/client';
 
+new prismaClient()
 const app = express();
 app.use(express.json());
-
-const JWT_SECRET = "supersecretkey"; // In production, keep in .env file
-
 // In-memory user store (replace with DB in real apps)
 interface User {
   username: string;
@@ -63,7 +64,7 @@ interface AuthRequest extends Request {
 
 
 // ================= Protected Route =================
-app.get("/profile", authMiddlepwsware, (req: AuthRequest, res: Response) => {
+app.get("/profile", authMiddleware, (req: AuthRequest, res: Response) => {
   res.json({ message: `Welcome ${req.user && (req.user as any).username}!` });
 });
 

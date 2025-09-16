@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  username  String    @unique
+  email     String    @unique
+  password  String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  // Relations
+  messages   Message[]
+  rooms      Membership[]
+}
+
+model Room {
+  id        Int       @id @default(autoincrement())
+  name      String
+  isGroup   Boolean   @default(false)
+  createdAt DateTime  @default(now())
+
+  // Relations
+  messages   Message[]
+  members    Membership[]
+}
+
+model Message {
+  id        Int       @id @default(autoincrement())
+  content   String
+  createdAt DateTime  @default(now())
+
+  // Relations
+  userId Int
+  roomId Int
+  user   User @relation(fields: [userId], references: [id])
+  room   Room @relation(fields: [roomId], references: [id])
+}
+
+model Membership {
+  id      Int   @id @default(autoincrement())
+  userId  Int
+  roomId  Int
+
+  user User @relation(fields: [userId], references: [id])
+  room Room @relation(fields: [roomId], references: [id])
+
+  @@unique([userId, roomId]) // prevent duplicate entries
+}
